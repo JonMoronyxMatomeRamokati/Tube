@@ -128,5 +128,27 @@
   }
 </script>
 <script src="script.js"></script>
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyD20uQ0D8v4fm2I_oO_JC0Xk1ZoWdq9iH0",
+  authDomain: "codetube-74a68.firebaseapp.com",
+  databaseURL: "https://codetube-74a68-default-rtdb.firebaseio.com",
+  projectId: "codetube-74a68",
+  storageBucket: "codetube-74a68.firebasestorage.app",
+  messagingSenderId: "62166911074",
+  appId: "1:62166911074:web:81f70fc6175f58605d693b",
+  measurementId: "G-FSL81ZCD4B"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 </body>
 </html>
