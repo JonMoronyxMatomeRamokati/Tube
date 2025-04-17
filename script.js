@@ -1,4 +1,4 @@
-// Your real Firebase config
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyD20uQ0D8v4fm2I_oO_JC0Xk1ZoWdq9iH0",
   authDomain: "codetube-74a68.firebaseapp.com",
@@ -10,22 +10,26 @@ const firebaseConfig = {
   measurementId: "G-FSL81ZCD4B"
 };
 
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// Add video function
 function addVideo() {
   const title = document.getElementById('videoTitle').value.trim();
   const url = document.getElementById('videoURL').value.trim();
+  
   if (title && url.includes("youtube.com")) {
     const videoID = url.split("v=")[1]?.split("&")[0];
     db.collection("videos").add({ title, videoID });
     document.getElementById('videoTitle').value = '';
     document.getElementById('videoURL').value = '';
   } else {
-    alert("Enter a valid YouTube link and title.");
+    alert("Please enter a valid YouTube link and title.");
   }
 }
 
+// Load videos
 db.collection("videos").onSnapshot(snapshot => {
   const videoList = document.getElementById('videos');
   videoList.innerHTML = '';
@@ -48,6 +52,7 @@ db.collection("videos").onSnapshot(snapshot => {
   });
 });
 
+// Add comment function
 function addComment(videoID) {
   const commentInput = document.getElementById(`comment-${videoID}`);
   const text = commentInput.value.trim();
@@ -57,6 +62,7 @@ function addComment(videoID) {
   }
 }
 
+// Load comments
 function loadComments(videoID) {
   const commentList = document.getElementById(`comments-${videoID}`);
   db.collection("videos").doc(videoID).collection("comments").onSnapshot(snapshot => {
@@ -68,4 +74,11 @@ function loadComments(videoID) {
       commentList.appendChild(p);
     });
   });
+}
+
+// Show sections (Home, Videos, etc.)
+function showSection(section) {
+  document.getElementById('home').classList.add('hidden');
+  document.getElementById('videos').classList.add('hidden');
+  document.getElementById(section).classList.remove('hidden');
 }
