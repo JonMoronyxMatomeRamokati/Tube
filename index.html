@@ -1,76 +1,94 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>CodeTube - Learn Coding (Supabase)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <meta charset="UTF-8" />
+  <title>CodeTube - Learn Coding</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body { background:#0f0f0f; color:#fff; font-family:sans-serif; margin:0; padding:0 }
-    header { background:#181818; padding:15px; display:flex; justify-content:space-between; align-items:center }
-    h1 { color:#4a90e2; margin:0; font-size:24px }
-    nav a { color:#ccc; margin-left:15px; text-decoration:none; font-size:14px }
-    nav a:hover { color:#fff }
-    .container { padding:20px }
-    .upload-box, .video-card, .career-box, .subscribe-box { background:#181818; padding:15px; border-radius:10px; margin:15px 0 }
-    .upload-box input, .upload-box button, .comment-input { padding:10px; margin:5px 0; width:100%; border:none; border-radius:5px }
-    .upload-box input, .comment-input { background:#282828; color:#fff }
-    .upload-box button, .comment-btn { background:#4a90e2; color:#fff; cursor:pointer; font-weight:bold }
-    .video-card video { width:100%; height:auto; border-radius:5px }
-    .video-card p { margin:10px 0 0 }
-    .comments { margin-top:10px; background:#202020; padding:10px; border-radius:5px }
-    .comments h4 { margin:0 0 8px; font-size:15px; color:#4a90e2 }
-    .comment-list p { margin:5px 0; font-size:13px; color:#ddd }
-    .career-box h3, .subscribe-box h3 { color:#4a90e2 }
-    .career-item { background:#282828; padding:10px; margin:8px 0; border-radius:5px }
-    footer { background:#181818; padding:10px; text-align:center; margin-top:20px; color:#999 }
+    body { background: #0f0f0f; color: #fff; font-family: sans-serif; margin: 0; padding: 0; }
+    header { background: #181818; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+    h1 { color: #4a90e2; margin: 0; font-size: 24px; }
+    nav a { color: #ccc; margin-left: 15px; text-decoration: none; font-size: 14px; }
+    nav a:hover { color: #fff; }
+    .container { padding: 20px; }
+    .upload-box, .video-card, .career-box, .subscribe-box { background: #181818; padding: 15px; border-radius: 10px; margin: 15px 0; }
+    .upload-box input, .upload-box button, .comment-input { padding: 10px; margin: 5px 0; width: 100%; border: none; border-radius: 5px; }
+    .upload-box input, .comment-input { background: #282828; color: #fff; }
+    .upload-box button, .comment-btn { background: #4a90e2; color: #fff; cursor: pointer; font-weight: bold; }
+    .video-card video { width: 100%; height: auto; border-radius: 5px; }
+    .video-card p { margin: 10px 0 0; }
+    .comments { margin-top: 10px; background: #202020; padding: 10px; border-radius: 5px; }
+    .comments h4 { margin: 0 0 8px; font-size: 15px; color: #4a90e2; }
+    .comment-list p { margin: 5px 0; font-size: 13px; color: #ddd; }
+    .career-box h3, .subscribe-box h3 { color: #4a90e2; }
+    .career-item { background: #282828; padding: 10px; margin: 8px 0; border-radius: 5px; }
+    footer { background: #181818; padding: 10px; text-align: center; margin-top: 20px; color: #999; }
   </style>
 </head>
-<body><header>
+<body>
+
+<header>
   <h1>CodeTube</h1>
   <nav>
     <a href="#home">Home</a>
     <a href="#careers">Careers</a>
     <a href="#subscribe">Subscribe</a>
   </nav>
-</header><div class="container" id="home">
+</header>
+
+<div class="container" id="home">
   <h2>Welcome to CodeTube!</h2>
-  <p>Upload your coding tutorials and discover new career paths!</p>  <div class="upload-box">
+  <p>Upload your coding tutorials and discover new career paths!</p>
+
+  <div class="upload-box">
     <h3>Upload a Video File</h3>
     <input type="text" id="videoTitle" placeholder="Video Title">
     <input type="file" id="videoFile" accept="video/*">
     <button onclick="uploadVideo()">Post Video</button>
-  </div>  <div id="videos"></div>  <div class="career-box" id="careers">
+  </div>
+
+  <div id="videos"></div>
+
+  <div class="career-box" id="careers">
     <h3>Career Paths</h3>
     <div class="career-item">Web Developer</div>
     <div class="career-item">Mobile App Developer</div>
     <div class="career-item">Data Scientist</div>
-  </div>  <div class="subscribe-box" id="subscribe">
+  </div>
+
+  <div class="subscribe-box" id="subscribe">
     <h3>Subscribe</h3>
     <p>Stay updated with the latest videos and career tips!</p>
     <input type="text" id="subscriberEmail" placeholder="Enter your email">
     <button onclick="subscribe()">Subscribe</button>
   </div>
-</div><footer>
+</div>
+
+<footer>
   CodeTube &copy; 2025
-</footer><script>
+</footer>
+
+<script>
   const supabase = supabase.createClient(
-    'https://YOUR_PROJECT_ID.supabase.co',
-    'YOUR_PUBLIC_ANON_KEY'
+    'https://vgmixlpwsuqitekhyqot.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnbWl4bHB3c3VxaXRla2h5cW90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY1MTg3MzgsImV4cCI6MjA2MjA5NDczOH0.u8z-bjUal4pYWzMgGtKdXkez3IqVVimr5d3URF069kE'
   );
 
   async function uploadVideo() {
     const title = document.getElementById('videoTitle').value.trim();
-    const file = document.getElementById('videoFile').files[0];
-    if (!title || !file) return alert("Please enter a title and select a video file.");
+    const fileInput = document.getElementById('videoFile');
+    const file = fileInput.files[0];
+    if (!title || !file) return alert("Please provide a title and file.");
 
-    const filePath = `videos/${Date.now()}_${file.name}`;
-    const { data, error } = await supabase.storage.from('videos').upload(filePath, file);
-    if (error) return alert("Upload failed: " + error.message);
+    const { data, error } = await supabase.storage.from('videos').upload(file.name, file, { cacheControl: '3600', upsert: false });
+    if (error) return alert("Upload failed.");
 
-    const { data: publicURL } = supabase.storage.from('videos').getPublicUrl(filePath);
+    const { data: urlData } = supabase.storage.from('videos').getPublicUrl(file.name);
+    const videoURL = urlData.publicUrl;
 
-    await supabase.from('videos').insert([{ title: title, video_url: publicURL.publicUrl }]);
-    alert("Video uploaded!");
+    await supabase.from('videos').insert([{ title, video_url: videoURL }]);
+    alert("Uploaded!");
     loadVideos();
   }
 
@@ -78,8 +96,7 @@
     const { data: videos } = await supabase.from('videos').select('*').order('id', { ascending: false });
     const videoList = document.getElementById('videos');
     videoList.innerHTML = '';
-
-    for (let video of videos) {
+    for (const video of videos) {
       const card = document.createElement('div');
       card.className = 'video-card';
       card.innerHTML = `
@@ -97,31 +114,37 @@
     }
   }
 
-  async function addComment(videoID) {
-    const commentText = document.getElementById(`comment-${videoID}`).value.trim();
-    if (!commentText) return;
-    await supabase.from('comments').insert([{ video_id: videoID, text: commentText }]);
-    loadComments(videoID);
+  async function addComment(videoId) {
+    const input = document.getElementById(`comment-${videoId}`);
+    const text = input.value.trim();
+    if (!text) return;
+    await supabase.from('comments').insert([{ video_id: videoId, text }]);
+    input.value = '';
+    loadComments(videoId);
   }
 
-  async function loadComments(videoID) {
-    const { data: comments } = await supabase.from('comments').select('*').eq('video_id', videoID);
-    const commentList = document.getElementById(`comments-${videoID}`);
-    commentList.innerHTML = '';
+  async function loadComments(videoId) {
+    const { data: comments } = await supabase.from('comments').select('*').eq('video_id', videoId).order('id', { ascending: true });
+    const list = document.getElementById(`comments-${videoId}`);
+    list.innerHTML = '';
     comments.forEach(c => {
       const p = document.createElement('p');
       p.textContent = c.text;
-      commentList.appendChild(p);
+      list.appendChild(p);
     });
   }
 
   async function subscribe() {
     const email = document.getElementById('subscriberEmail').value.trim();
-    if (!email) return;
-    await supabase.from('subscribers').insert([{ email }]);
-    alert("Subscribed successfully!");
+    if (email) {
+      await supabase.from('subscribers').insert([{ email }]);
+      alert("Subscribed!");
+      document.getElementById('subscriberEmail').value = '';
+    }
   }
 
   loadVideos();
-</script></body>
+</script>
+
+</body>
 </html>
