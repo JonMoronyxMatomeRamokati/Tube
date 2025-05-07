@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CodeTube - Learn Coding</title>
+  <title>CodeTube - Learn Coding (Supabase)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
     body { background:#0f0f0f; color:#fff; font-family:sans-serif; margin:0; padding:0 }
     header { background:#181818; padding:15px; display:flex; justify-content:space-between; align-items:center }
@@ -28,142 +25,103 @@
     footer { background:#181818; padding:10px; text-align:center; margin-top:20px; color:#999 }
   </style>
 </head>
-<body>
-
-<header>
+<body><header>
   <h1>CodeTube</h1>
   <nav>
     <a href="#home">Home</a>
     <a href="#careers">Careers</a>
     <a href="#subscribe">Subscribe</a>
   </nav>
-</header>
-
-<div class="container" id="home">
+</header><div class="container" id="home">
   <h2>Welcome to CodeTube!</h2>
-  <p>Upload your coding tutorials and discover new career paths!</p>
-
-  <div class="upload-box">
+  <p>Upload your coding tutorials and discover new career paths!</p>  <div class="upload-box">
     <h3>Upload a Video File</h3>
     <input type="text" id="videoTitle" placeholder="Video Title">
     <input type="file" id="videoFile" accept="video/*">
     <button onclick="uploadVideo()">Post Video</button>
-  </div>
-
-  <div id="videos"></div>
-
-  <div class="career-box" id="careers">
+  </div>  <div id="videos"></div>  <div class="career-box" id="careers">
     <h3>Career Paths</h3>
     <div class="career-item">Web Developer</div>
     <div class="career-item">Mobile App Developer</div>
     <div class="career-item">Data Scientist</div>
-  </div>
-
-  <div class="subscribe-box" id="subscribe">
+  </div>  <div class="subscribe-box" id="subscribe">
     <h3>Subscribe</h3>
     <p>Stay updated with the latest videos and career tips!</p>
     <input type="text" id="subscriberEmail" placeholder="Enter your email">
     <button onclick="subscribe()">Subscribe</button>
   </div>
-</div>
-
-<footer>
+</div><footer>
   CodeTube &copy; 2025
-</footer>
+</footer><script>
+  const supabase = supabase.createClient(
+    'https://YOUR_PROJECT_ID.supabase.co',
+    'YOUR_PUBLIC_ANON_KEY'
+  );
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyD20uQ0D8v4fm2I_oO_JC0Xk1ZoWdq9iH0",
-    authDomain: "codetube-74a68.firebaseapp.com",
-    projectId: "codetube-74a68",
-    storageBucket: "codetube-74a68.appspot.com",
-    messagingSenderId: "62166911074",
-    appId: "1:62166911074:web:81f70fc6175f58605d693b"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-  const storage = firebase.storage();
-
-  function uploadVideo() {
+  async function uploadVideo() {
     const title = document.getElementById('videoTitle').value.trim();
-    const fileInput = document.getElementById('videoFile');
-    const file = fileInput.files[0];
-    if (!title || !file) {
-      alert("Please enter a title and choose a video file.");
-      return;
-    }
+    const file = document.getElementById('videoFile').files[0];
+    if (!title || !file) return alert("Please enter a title and select a video file.");
 
-    const storageRef = storage.ref('videos/' + file.name);
-    const uploadTask = storageRef.put(file);
+    const filePath = `videos/${Date.now()}_${file.name}`;
+    const { data, error } = await supabase.storage.from('videos').upload(filePath, file);
+    if (error) return alert("Upload failed: " + error.message);
 
-    uploadTask.on('state_changed', 
-      null,
-      error => { alert("Upload failed."); },
-      () => {
-        uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
-          db.collection("videos").add({ title, videoURL: downloadURL });
-          document.getElementById('videoTitle').value = '';
-          fileInput.value = '';
-          alert("Video uploaded!");
-        });
-      }
-    );
+    const { data: publicURL } = supabase.storage.from('videos').getPublicUrl(filePath);
+
+    await supabase.from('videos').insert([{ title: title, video_url: publicURL.publicUrl }]);
+    alert("Video uploaded!");
+    loadVideos();
   }
 
-  db.collection("videos").onSnapshot(snapshot => {
+  async function loadVideos() {
+    const { data: videos } = await supabase.from('videos').select('*').order('id', { ascending: false });
     const videoList = document.getElementById('videos');
     videoList.innerHTML = '';
-    snapshot.forEach(doc => {
-      const video = doc.data();
+
+    for (let video of videos) {
       const card = document.createElement('div');
       card.className = 'video-card';
       card.innerHTML = `
-        <video controls src="${video.videoURL}"></video>
+        <video controls src="${video.video_url}"></video>
         <p>${video.title}</p>
         <div class="comments">
           <h4>Comments</h4>
-          <div class="comment-list" id="comments-${doc.id}"></div>
-          <input type="text" class="comment-input" placeholder="Write a comment..." id="comment-${doc.id}">
-          <button class="comment-btn" onclick="addComment('${doc.id}')">Post</button>
+          <div class="comment-list" id="comments-${video.id}"></div>
+          <input type="text" class="comment-input" placeholder="Write a comment..." id="comment-${video.id}">
+          <button class="comment-btn" onclick="addComment(${video.id})">Post</button>
         </div>
       `;
-      videoList.prepend(card);
-      loadComments(doc.id);
-    });
-  });
-
-  function addComment(videoID) {
-    const commentInput = document.getElementById(`comment-${videoID}`);
-    const text = commentInput.value.trim();
-    if (text) {
-      db.collection("videos").doc(videoID).collection("comments").add({ text });
-      commentInput.value = '';
+      videoList.appendChild(card);
+      loadComments(video.id);
     }
   }
 
-  function loadComments(videoID) {
+  async function addComment(videoID) {
+    const commentText = document.getElementById(`comment-${videoID}`).value.trim();
+    if (!commentText) return;
+    await supabase.from('comments').insert([{ video_id: videoID, text: commentText }]);
+    loadComments(videoID);
+  }
+
+  async function loadComments(videoID) {
+    const { data: comments } = await supabase.from('comments').select('*').eq('video_id', videoID);
     const commentList = document.getElementById(`comments-${videoID}`);
-    db.collection("videos").doc(videoID).collection("comments").onSnapshot(snapshot => {
-      commentList.innerHTML = '';
-      snapshot.forEach(doc => {
-        const comment = doc.data();
-        const p = document.createElement('p');
-        p.textContent = comment.text;
-        commentList.appendChild(p);
-      });
+    commentList.innerHTML = '';
+    comments.forEach(c => {
+      const p = document.createElement('p');
+      p.textContent = c.text;
+      commentList.appendChild(p);
     });
   }
 
-  function subscribe() {
+  async function subscribe() {
     const email = document.getElementById('subscriberEmail').value.trim();
-    if (email) {
-      db.collection("subscribers").add({ email });
-      alert("Subscribed successfully!");
-      document.getElementById('subscriberEmail').value = '';
-    }
+    if (!email) return;
+    await supabase.from('subscribers').insert([{ email }]);
+    alert("Subscribed successfully!");
   }
-</script>
 
-</body>
+  loadVideos();
+</script></body>
 </html>
