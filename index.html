@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>CodeTube - Learn Coding</title>
+  <title>Docktrina</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -19,6 +19,16 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+    .logo-title {
+      display: flex;
+      align-items: center;
+    }
+    .logo-title img {
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+      border-radius: 5px;
     }
     h1 {
       color: #4a90e2;
@@ -112,7 +122,10 @@
 </head>
 <body>
   <header>
-    <h1>CodeTube</h1>
+    <div class="logo-title">
+      <img src="A_digital_screenshot_displays_&quot;Docktrina,&quot;_an_educ.png" alt="Docktrina Logo" />
+      <h1>Docktrina</h1>
+    </div>
     <nav>
       <a href="#home">Home</a>
       <a href="#careers">Careers</a>
@@ -121,7 +134,7 @@
   </header>
 
   <div class="container" id="home">
-    <h2>Welcome to CodeTube!</h2>
+    <h2>Welcome to Docktrina!</h2>
     <p>Upload your coding tutorials and discover new career paths!</p>
 
     <div class="upload-box">
@@ -148,7 +161,7 @@
     </div>
   </div>
 
-  <footer>CodeTube &copy; 2025</footer>
+  <footer>Docktrina &copy; 2025</footer>
 
   <script>
     const supabase = supabase.createClient(
