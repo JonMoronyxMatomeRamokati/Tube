@@ -3,170 +3,196 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Docktrina Video Upload</title>
+  <title>Docktrina - Learn Anything</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
+      padding: 10px;
       background-color: #f4f4f4;
+      margin: 0;
     }
-
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background: #222;
+      color: white;
+    }
+    header img {
+      height: 40px;
+    }
     h1 {
-      text-align: center;
-      color: #333;
+      margin: 0;
     }
-
-    form {
+    form, .auth-section {
       background-color: #fff;
       padding: 20px;
       border-radius: 8px;
       max-width: 500px;
       margin: 20px auto;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-
-    input[type="text"],
-    input[type="file"] {
+    input, select, button {
       width: 100%;
       padding: 10px;
-      margin: 10px 0;
+      margin: 8px 0;
+      border-radius: 5px;
       border: 1px solid #ccc;
-      border-radius: 4px;
     }
-
     button {
-      padding: 10px 20px;
       background-color: #007bff;
       color: white;
       border: none;
-      border-radius: 4px;
-      cursor: pointer;
     }
-
     button:hover {
       background-color: #0056b3;
     }
-
     .video-list {
       max-width: 800px;
       margin: 30px auto;
     }
-
     .video-item {
       background-color: #fff;
       padding: 15px;
       margin-bottom: 15px;
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-
     video {
       width: 100%;
       border-radius: 4px;
       margin-top: 10px;
     }
-
     .timestamp {
       font-size: 12px;
       color: gray;
-      margin-top: 5px;
+    }
+    @media (max-width: 600px) {
+      header, .video-list, form {
+        padding: 10px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Upload a Video to CodeTube</h1>
-  <p style="color: gray; font-size: 12px; text-align:center;">Last updated: June 6, 2025</p>
-  <form id="uploadForm">
-    <input type="text" id="title" placeholder="Video Title" required />
-    <input type="file" id="videoFile" accept="video/*" required />
-    <button type="submit">Upload Video</button>
-  </form>
 
-  <div class="video-list" id="videoList">
-    <h2>Uploaded Videos</h2>
+<header>
+  <div style="display: flex; align-items: center;">
+    <img src="A_logo_for_CodeTube,_an_educational_technology_pla.png" alt="Docktrina Logo" />
+    <h1 style="margin-left: 10px;">Docktrina</h1>
   </div>
+  <div id="authControls">
+    <button onclick="logout()">Logout</button>
+  </div>
+</header>
 
-  <script>
-    const supabaseUrl = 'https://ylwcrqjycpxyukukktvn.supabase.co';
-    const supabaseKey = 'YOUR_SUPABASE_KEY_HERE'; // Replace with your real key
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+<div class="auth-section" id="authSection">
+  <input type="email" id="email" placeholder="Enter email" />
+  <button onclick="login()">Login / Signup</button>
+</div>
 
-    const uploadForm = document.getElementById('uploadForm');
-    const videoList = document.getElementById('videoList');
+<form id="uploadForm" style="display:none;">
+  <input type="text" id="title" placeholder="Video Title" required />
+  <select id="category">
+    <option value="Technology">Technology</option>
+    <option value="Science">Science</option>
+    <option value="Business">Business</option>
+    <option value="Art">Art</option>
+  </select>
+  <input type="file" id="videoFile" accept="video/*" required />
+  <button type="submit">Upload Video</button>
+</form>
 
-    uploadForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+<div class="video-list" id="videoList">
+  <h2>Uploaded Videos</h2>
+</div>
 
-      const title = document.getElementById('title').value.trim();
-      const file = document.getElementById('videoFile').files[0];
+<script>
+  const supabaseUrl = 'https://vgmixlpwsuqitekhyqot.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnbWl4bHB3c3VxaXRla2h5cW90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY1MTg3MzgsImV4cCI6MjA2MjA5NDczOH0.u8z-bjUal4pYWzMgGtKdXkez3IqVVimr5d3URF069kE';
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-      if (!title || !file) {
-        alert('Please provide a title and select a video file.');
-        return;
-      }
+  const uploadForm = document.getElementById('uploadForm');
+  const videoList = document.getElementById('videoList');
+  const authSection = document.getElementById('authSection');
+  const authControls = document.getElementById('authControls');
 
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `videos/${fileName}`;
+  async function login() {
+    const email = document.getElementById('email').value;
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    alert(error ? error.message : "Check your email for the login link.");
+  }
 
-      // Upload video to Supabase Storage
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('videos')
-        .upload(filePath, file);
+  async function logout() {
+    await supabase.auth.signOut();
+    authSection.style.display = 'block';
+    uploadForm.style.display = 'none';
+  }
 
-      if (uploadError) {
-        console.error('Upload error:', uploadError.message);
-        alert('Video upload failed.');
-        return;
-      }
-
-      const videoUrl = `${supabaseUrl}/storage/v1/object/public/videos/${filePath}`;
-
-      // Insert video info into Supabase Table
-      const { data, error } = await supabase.from('videos').insert([
-        {
-          title: title,
-          video_url: videoUrl,
-        },
-      ]);
-
-      if (error) {
-        console.error('Insert error:', error.message);
-        alert('Failed to save video info.');
-      } else {
-        alert('Video uploaded successfully!');
-        uploadForm.reset();
-        loadVideos();
-      }
-    });
-
-    async function loadVideos() {
-      const { data: videos, error } = await supabase
-        .from('videos')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Fetch error:', error.message);
-        return;
-      }
-
-      videoList.innerHTML = '<h2>Uploaded Videos</h2>';
-      videos.forEach((video) => {
-        const videoItem = document.createElement('div');
-        videoItem.className = 'video-item';
-        videoItem.innerHTML = `
-          <h3>${video.title}</h3>
-          <video controls src="${video.video_url}"></video>
-          <div class="timestamp">Uploaded on ${new Date(video.created_at).toLocaleString()}</div>
-        `;
-        videoList.appendChild(videoItem);
-      });
+  supabase.auth.onAuthStateChange((_event, session) => {
+    if (session) {
+      authSection.style.display = 'none';
+      uploadForm.style.display = 'block';
+      loadVideos();
+    } else {
+      authSection.style.display = 'block';
+      uploadForm.style.display = 'none';
     }
+  });
 
-    // Load videos on page load
+  uploadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const title = document.getElementById('title').value.trim();
+    const category = document.getElementById('category').value;
+    const file = document.getElementById('videoFile').files[0];
+
+    if (!title || !file) return alert('Missing info');
+
+    const ext = file.name.split('.').pop();
+    const fileName = `${Date.now()}.${ext}`;
+    const filePath = `videos/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('videos')
+      .upload(filePath, file);
+
+    if (uploadError) return alert('Upload failed');
+
+    const videoUrl = `${supabaseUrl}/storage/v1/object/public/videos/${filePath}`;
+
+    const { error } = await supabase.from('videos').insert([
+      { title, video_url: videoUrl, category }
+    ]);
+
+    if (error) return alert('Save failed');
+    alert('Uploaded!');
+    uploadForm.reset();
     loadVideos();
-  </script>
+  });
+
+  async function loadVideos() {
+    const { data: videos, error } = await supabase
+      .from('videos')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) return;
+
+    videoList.innerHTML = '<h2>Uploaded Videos</h2>';
+    videos.forEach((video) => {
+      const el = document.createElement('div');
+      el.className = 'video-item';
+      el.innerHTML = `
+        <h3>${video.title}</h3>
+        <p><strong>Category:</strong> ${video.category}</p>
+        <video controls src="${video.video_url}"></video>
+        <div class="timestamp">Uploaded: ${new Date(video.created_at).toLocaleString()}</div>
+      `;
+      videoList.appendChild(el);
+    });
+  }
+</script>
 </body>
 </html>
