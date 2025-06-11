@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,6 +13,7 @@
       padding: 0;
       color: #333;
     }
+
     header {
       background-color: #2b2d42;
       color: white;
@@ -19,74 +21,75 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }header img {
-  height: 40px;
-}
+    }
 
-header h1 {
-  margin: 0;
-  font-size: 1.8rem;
-}
+    header img {
+      height: 40px;
+    }
 
-main {
-  padding: 2rem;
-  max-width: 800px;
-  margin: auto;
-}
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
 
-form {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
-}
+    main {
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+    }
 
-input[type="text"], input[type="file"] {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
+    form {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
 
-button {
-  padding: 10px 20px;
-  background-color: #2b2d42;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
+    input[type="text"], input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
 
-button:hover {
-  background-color: #1d2034;
-}
+    button {
+      padding: 10px 20px;
+      background-color: #2b2d42;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
 
-.video-item {
-  background-color: white;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
+    button:hover {
+      background-color: #1d2034;
+    }
 
-.video-item h3 {
-  margin: 0;
-}
+    .video-item {
+      background-color: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
 
-video {
-  width: 100%;
-  margin-top: 10px;
-  border-radius: 4px;
-}
+    .video-item h3 {
+      margin: 0;
+    }
 
-.timestamp, .likes {
-  font-size: 0.9rem;
-  color: #777;
-  margin-top: 5px;
-}
+    video {
+      width: 100%;
+      margin-top: 10px;
+      border-radius: 4px;
+    }
 
+    .timestamp, .likes {
+      font-size: 0.9rem;
+      color: #777;
+      margin-top: 5px;
+    }
   </style>
 </head>
 <body>
@@ -94,94 +97,102 @@ video {
     <img src="logo.png" alt="Docktrina Logo" />
     <h1>Docktrina</h1>
   </header>
+
   <main>
     <form id="uploadForm">
       <input type="text" id="title" placeholder="Video Title" required />
       <input type="file" id="videoFile" accept="video/*" required />
       <button type="submit">Upload Video</button>
     </form>
+
     <section id="videoList">
       <h2>Uploaded Videos</h2>
     </section>
   </main>
+
   <script>
     const supabaseUrl = 'https://vgmixlpwsuqitekhyqot.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnbWl4bHB3c3VxaXRla2h5cW90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY1MTg3MzgsImV4cCI6MjA2MjA5NDczOH0.u8z-bjUal4pYWzMgGtKdXkez3IqVVimr5d3URF069kE';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);const uploadForm = document.getElementById('uploadForm');
-const videoList = document.getElementById('videoList');
 
-uploadForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const title = document.getElementById('title').value.trim();
-  const file = document.getElementById('videoFile').files[0];
+    const client = supabase.createClient(supabaseUrl, supabaseKey);
+    const uploadForm = document.getElementById('uploadForm');
+    const videoList = document.getElementById('videoList');
 
-  if (!title || !file) {
-    alert('Please provide a title and select a video file.');
-    return;
-  }
+    uploadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-  const fileExt = file.name.split('.').pop();
-  const fileName = `${Date.now()}.${fileExt}`;
-  const filePath = `${fileName}`;
+      const title = document.getElementById('title').value.trim();
+      const file = document.getElementById('videoFile').files[0];
 
-  const { data: uploadData, error: uploadError } = await supabase.storage.from('videos').upload(filePath, file);
+      if (!title || !file) {
+        alert('Please provide a title and select a video file.');
+        return;
+      }
 
-  if (uploadError) {
-    console.error('Upload error:', uploadError.message);
-    alert('Video upload failed.');
-    return;
-  }
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `videos/${fileName}`;
 
-  const videoUrl = `${supabaseUrl}/storage/v1/object/public/videos/${filePath}`;
+      const { data: uploadData, error: uploadError } = await client.storage.from('videos').upload(filePath, file);
 
-  const { data, error } = await supabase.from('videos').insert([
-    { title, video_url: videoUrl, likes: 0 }
-  ]);
+      if (uploadError) {
+        console.error('Upload error:', uploadError.message);
+        alert('Video upload failed.');
+        return;
+      }
 
-  if (error) {
-    console.error('Insert error:', error.message);
-    alert('Failed to save video info.');
-  } else {
-    alert('Video uploaded successfully!');
-    uploadForm.reset();
+      const videoUrl = `${supabaseUrl}/storage/v1/object/public/videos/${filePath}`;
+
+      const { data, error } = await client.from('videos').insert([
+        { title, video_url: videoUrl, likes: 0 }
+      ]);
+
+      if (error) {
+        console.error('Insert error:', error.message);
+        alert('Failed to save video info.');
+      } else {
+        alert('Video uploaded successfully!');
+        uploadForm.reset();
+        loadVideos();
+      }
+    });
+
+    async function loadVideos() {
+      const { data: videos, error } = await client.from('videos').select('*').order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Fetch error:', error.message);
+        return;
+      }
+
+      videoList.innerHTML = '<h2>Uploaded Videos</h2>';
+
+      videos.forEach((video) => {
+        const videoItem = document.createElement('div');
+        videoItem.className = 'video-item';
+        videoItem.innerHTML = `
+          <h3>${video.title}</h3>
+          <video controls src="${video.video_url}"></video>
+          <div class="timestamp">Uploaded on ${new Date(video.created_at).toLocaleString()}</div>
+          <div class="likes">
+            Likes: <span id="likes-${video.id}">${video.likes || 0}</span>
+            <button onclick="likeVideo('${video.id}')">👍</button>
+          </div>
+        `;
+        videoList.appendChild(videoItem);
+      });
+    }
+
+    async function likeVideo(videoId) {
+      const { data, error } = await client.rpc('increment_like', { video_id: videoId });
+      if (error) {
+        console.error('Like error:', error.message);
+      } else {
+        loadVideos();
+      }
+    }
+
     loadVideos();
-  }
-});
-
-async function loadVideos() {
-  const { data: videos, error } = await supabase.from('videos').select('*').order('created_at', { ascending: false });
-
-  if (error) {
-    console.error('Fetch error:', error.message);
-    return;
-  }
-
-  videoList.innerHTML = '<h2>Uploaded Videos</h2>';
-
-  videos.forEach((video) => {
-    const videoItem = document.createElement('div');
-    videoItem.className = 'video-item';
-    videoItem.innerHTML = `
-      <h3>${video.title}</h3>
-      <video controls src="${video.video_url}"></video>
-      <div class="timestamp">Uploaded on ${new Date(video.created_at).toLocaleString()}</div>
-      <div class="likes">Likes: <span id="likes-${video.id}">${video.likes || 0}</span> <button onclick="likeVideo('${video.id}')">👍</button></div>
-    `;
-    videoList.appendChild(videoItem);
-  });
-}
-
-async function likeVideo(videoId) {
-  const { data, error } = await supabase.rpc('increment_like', { video_id: videoId });
-  if (error) {
-    console.error('Like error:', error.message);
-  } else {
-    loadVideos();
-  }
-}
-
-loadVideos();
-
   </script>
 </body>
 </html>
